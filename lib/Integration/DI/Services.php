@@ -36,6 +36,42 @@ class Services
         $this->loadBindings();
         $this->loadProducers();
         $this->loadConsumers();
+
+        $this->loadPartsHolder();
+    }
+
+    protected function loadPartsHolder()
+    {
+        $this->container->addInstanceLazy('rabbitmq.parts_holder', [
+            'constructor' => function () {
+                $className = $this->parameters['rabbitmq.parts_holder.class'];
+
+                /** @var \Yngc0der\RabbitMq\RabbitMq\AmqpPartsHolder $instance */
+                $instance = new $className();
+
+                foreach ($this->config['bindings'] as $binding) {
+                    ksort($binding);
+                    $key = md5(json_encode($binding));
+
+                    $part = $this->container->get("rabbitmq.binding.{$key}");
+                    $instance->addPart('rabbitmq.binding', $part);
+                }
+
+                foreach ($this->config['producers'] as $key => $producer) {
+                    $part = $this->container->get("rabbitmq.{$key}_producer");
+                    $instance->addPart('rabbitmq.base_amqp', $part);
+                    $instance->addPart('rabbitmq.producer', $part);
+                }
+
+                foreach ($this->config['consumers'] as $key => $consumer) {
+                    $part = $this->container->get("rabbitmq.{$key}_consumer");
+                    $instance->addPart('rabbitmq.base_amqp', $part);
+                    $instance->addPart('rabbitmq.consumer', $part);
+                }
+
+                return $instance;
+            },
+        ]);
     }
 
     protected function loadConnections()

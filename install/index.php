@@ -64,14 +64,14 @@ class yngc0der_rabbitmq extends CModule
 
         $request = Context::getCurrent()->getRequest();
 
-        if (is_null($request->get('step')) || (int) $request->get('step') === 1) {
+        if (is_null($request->get('step')) || (int)$request->get('step') === 1) {
             $APPLICATION->IncludeAdminFile(
                 Loc::getMessage('YC_UNINSTALL_TITLE'),
                 $this->getPath() . '/install/unstep.php'
             );
         }
 
-        if ((int) $request->get('step') === 2) {
+        if ((int)$request->get('step') === 2) {
             Loader::includeModule($this->MODULE_ID);
 
             if (is_null($request->get('savedata')) || $request->get('savedata') !== 'Y') {
@@ -91,23 +91,24 @@ class yngc0der_rabbitmq extends CModule
     {
         parent::InstallEvents();
 
-//        EventManager::getInstance()->registerEventHandler(
-//            'yngc0der.cli',
-//            'OnCommandsLoad',
-//            $this->MODULE_ID,
-//            ''
-//        );
+        EventManager::getInstance()->registerEventHandler(
+            'yngc0der.cli',
+            'OnCommandsLoad',
+            $this->MODULE_ID,
+            '\\Yngc0der\\RabbitMq\\Integration\\CLI\\Commands',
+            'onCommandsLoad'
+        );
     }
 
     public function checkRequirements(): bool
     {
-        return CheckVersion(ModuleManager::getVersion('main'), '20.00.00');
+        return CheckVersion(ModuleManager::getVersion('main'), '20.5.400'); // integrated PSR-11 compatible service locator
     }
 
     public function getPath(bool $includeDocumentRoot = true): string
     {
         return $includeDocumentRoot
             ? dirname(__DIR__)
-            : (string) str_ireplace(Application::getDocumentRoot(),'', dirname(__DIR__));
+            : (string)str_ireplace(Application::getDocumentRoot(),'', dirname(__DIR__));
     }
 }

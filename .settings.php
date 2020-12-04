@@ -21,7 +21,7 @@ return [
             'rabbitmq.rpc_client.class' => '',
             'rabbitmq.rpc_server.class' => '',
             'rabbitmq.logged.channel.class' => '',
-            'rabbitmq.parts_holder.class' => '',
+            'rabbitmq.parts_holder.class' => 'Yngc0der\RabbitMq\RabbitMq\AmqpPartsHolder',
             'rabbitmq.fallback.class' => 'Yngc0der\RabbitMq\RabbitMq\Fallback',
         ],
         'readonly' => false,
@@ -30,7 +30,7 @@ return [
         'value' => [
             'rabbitmq.service_loader' => [
                 'className' => 'Yngc0der\RabbitMq\Integration\DI\Services',
-            ]
+            ],
         ],
         'readonly' => false,
     ],
